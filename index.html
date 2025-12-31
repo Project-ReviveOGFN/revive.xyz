@@ -1,1 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Downloads</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: #0d1117;
+            overflow: hidden;
+            position: relative;
+        }
 
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, #8b5cf620 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #3b82f615 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.02;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/></filter></defs><rect width="100%" height="100%" filter="url(%23noise)"/></svg>') repeat;
+            z-index: -1;
+        }
+
+        .splash {
+            position: fixed;
+            inset: 0;
+            background: #0d1117;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s ease;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .splash.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: #e6edf3;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .logo:hover {
+            color: #8b5cf6;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #8b5cf6;
+            transition: width 0.3s ease;
+        }
+
+        .logo:hover::after {
+            width: 100%;
+        }
+
+        .main {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.8s ease;
+        }
+
+        .main.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(16px);
+            transform-style: preserve-3d;
+            transition: transform 0.05s ease-out, box-shadow 0.15s ease-out, border-color 0.3s ease;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            will-change: transform;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #7d8590;
+        }
+
+        .downloads {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .download-link {
+            background: rgba(33, 38, 45, 0.5);
+            border: 1px solid #21262d;
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .download-link:hover {
+            background: rgba(48, 54, 61, 0.5);
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+        }
+
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .download-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b5cf6;
+            font-size: 1.25rem;
+        }
+
+        .download-text h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 4px;
+        }
+
+        .download-text p {
+            font-size: 0.8rem;
+            color: #7d8590;
+        }
+
+        .download-arrow {
+            color: #8b5cf6;
+            font-size: 1.25rem;
+            transition: transform 0.2s ease;
+        }
+
+        .download-link:hover .download-arrow {
+            transform: translateX(4px);
+        }
+
+        @media (max-width: 640px) {
+            .main {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 24px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="noise"></div>
+
+    <div class="splash" id="splash">
+        <div class="logo" id="logo">enter</div>
+    </div>
+
+    <div class="main" id="main">
+        <div class="container" id="container">
+            <div class="header">
+                <h1 id="title"></h1>
+                <p id="subtitle"></p>
+            </div>
+
+            <div class="downloads">
+                <a href="https://github.com/Project-ReviveOGFN/stuff/raw/refs/heads/main/Revive_0.0.2_x64_en-US.msi" class="download-link" download>
+                    <div class="download-info">
+                        <div class="download-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="download-text">
+                            <h3>Launcher</h3>
+                            <p>Download the latest version</p>
+                        </div>
+                    </div>
+                    <div class="download-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+
+                <a href="https://public.doxxed.cc/build.zip" class="download-link" download>
+                    <div class="download-info">
+                        <div class="download-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div class="download-text">
+                            <h3>Version 19.10</h3>
+                            <p>Latest stable build</p>
+                        </div>
+                    </div>
+                    <div class="download-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://github.com/Project-ReviveOGFN/Anticheat/raw/refs/heads/main/Faint%20Anticheat.dll" style="display:none"></a>
+    <a href="https://github.com/Project-ReviveOGFN/close.bat/releases/download/Solar/close.bat" style="display:none"></a>
+    <a href="https://github.com/Project-ReviveOGFN/stuff/raw/refs/heads/main/ROR.dll" style="display:none"></a>
+
+    <script>
+        const $ = id => document.getElementById(id);
+        const splash = $('splash');
+        const logo = $('logo');
+        const main = $('main');
+        const container = $('container');
+        const title = $('title');
+        const subtitle = $('subtitle');
+
+        async function type(el, text, speed = 60) {
+            el.classList.add('typing');
+            for (let i = 0; i <= text.length; i++) {
+                el.textContent = text.slice(0, i);
+                await new Promise(r => setTimeout(r, speed));
+            }
+            el.classList.remove('typing');
+        }
+
+        function initTilt() {
+            let isHovering = false;
+            let mouseX = 0;
+            let mouseY = 0;
+            let currentRotateX = 0;
+            let currentRotateY = 0;
+            
+            function updateTilt() {
+                if (!isHovering) {
+                    currentRotateX += (0 - currentRotateX) * 0.1;
+                    currentRotateY += (0 - currentRotateY) * 0.1;
+                    
+                    if (Math.abs(currentRotateX) < 0.01 && Math.abs(currentRotateY) < 0.01) {
+                        container.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)';
+                        container.style.boxShadow = `
+                            0 8px 32px rgba(0, 0, 0, 0.3),
+                            0 0 0 1px rgba(255, 255, 255, 0.05)
+                        `;
+                        container.style.borderColor = '#30363d';
+                        return;
+                    }
+                }
+                
+                container.style.transform = `
+                    perspective(1000px) 
+                    rotateX(${currentRotateX}deg) 
+                    rotateY(${currentRotateY}deg) 
+                    translateZ(${isHovering ? 20 : 0}px)
+                `;
+                
+                requestAnimationFrame(updateTilt);
+            }
+
+            container.addEventListener('mouseenter', () => {
+                isHovering = true;
+                container.style.borderColor = 'rgba(139, 92, 246, 0.3)';
+                updateTilt();
+            });
+
+            container.addEventListener('mousemove', e => {
+                if (!isHovering) return;
+                
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                mouseX = e.clientX - centerX;
+                mouseY = e.clientY - centerY;
+                
+                const maxTilt = 12;
+                const targetRotateX = -(mouseY / (rect.height / 2)) * maxTilt;
+                const targetRotateY = (mouseX / (rect.width / 2)) * maxTilt;
+                
+                currentRotateX += (targetRotateX - currentRotateX) * 0.15;
+                currentRotateY += (targetRotateY - currentRotateY) * 0.15;
+                
+                const shadowIntensity = Math.sqrt(mouseX * mouseX + mouseY * mouseY) / 100;
+                const shadowX = mouseX / 10;
+                const shadowY = mouseY / 10;
+                
+                container.style.boxShadow = `
+                    ${shadowX}px ${20 + shadowY}px ${40 + shadowIntensity * 20}px rgba(0, 0, 0, ${0.4 + shadowIntensity * 0.2}),
+                    0 0 0 1px rgba(139, 92, 246, ${0.1 + shadowIntensity * 0.1}),
+                    0 0 ${20 + shadowIntensity * 30}px rgba(139, 92, 246, ${shadowIntensity * 0.15})
+                `;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isHovering = false;
+            });
+        }
+
+        logo.addEventListener('click', enterSite);
+        splash.addEventListener('click', enterSite);
+
+        async function enterSite() {
+            splash.classList.add('hide');
+            
+            setTimeout(async () => {
+                main.classList.add('show');
+                
+                await new Promise(r => setTimeout(r, 200));
+                await type(title, 'Downloads', 80);
+                await new Promise(r => setTimeout(r, 100));
+                await type(subtitle, 'Get started', 50);
+                
+                initTilt();
+            }, 300);
+        }
+    </script>
+  <script>
+(function() {
+    const e = () => {
+        const w = window.outerWidth - window.innerWidth > 160;
+        const h = window.outerHeight - window.innerHeight > 160;
+        if (w || h) blk();
+    };
+    
+    const blk = () => {
+        document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0d1117;display:flex;align-items:center;justify-content:center;font-family:monospace;color:#e6edf3;font-size:2rem;z-index:99999">403</div>';
+        document.addEventListener('keydown', ev => ev.preventDefault(), true);
+        document.addEventListener('contextmenu', ev => ev.preventDefault(), true);
+    };
+    
+    document.addEventListener('contextmenu', ev => ev.preventDefault());
+    
+    document.addEventListener('keydown', ev => {
+        if (ev.keyCode === 123 || 
+            (ev.ctrlKey && ev.shiftKey && ev.keyCode === 73) ||
+            (ev.ctrlKey && ev.shiftKey && ev.keyCode === 74) ||
+            (ev.ctrlKey && ev.keyCode === 85) ||
+            (ev.ctrlKey && ev.shiftKey && ev.keyCode === 67)) {
+            ev.preventDefault();
+            return false;
+        }
+    });
+    
+    setInterval(e, 500);
+    setInterval(() => {(function(){return false;})['constructor']('debugger')()}, 50);
+    
+    if (window.top !== window.self) blk();
+})();
+</script>
+</body>
+</html>
